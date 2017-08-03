@@ -1,89 +1,109 @@
 import './App.css';
 
+import { FormControl, FormControlLabel, FormLabel } from 'material-ui/Form';
+import Radio, { RadioGroup } from 'material-ui/Radio';
 import React, { Component } from 'react';
-import { browserUsage, letterFrequency } from '@vx/mock-data';
 
-import { Arc } from '@vx/shape';
-import { GradientPinkBlue } from '@vx/gradient';
-import { Group } from '@vx/group';
+import { Grafico } from './Grafico/Grafico.react';
 import Paper from 'material-ui/Paper';
 import { ResultadosEncuesta } from './ResultadosEncuesta';
 
-const letters = letterFrequency.slice(0, 4);
-const browsers = Object.keys(browserUsage[0]).filter(k => k !== 'date').map(k => ({ label: k, usage: browserUsage[0][k] }));
+const Graficos = [
+  {
+    field: 'PC_ESCRITORIO',
+    label: 'PC de escritorio',
+    results: getResultsForGraphic('PC_ESCRITORIO')
+  },
+  {
+    field: 'NOTEBBOK',
+    label: 'Notebook',
+    results: getResultsForGraphic('NOTEBBOK')
+  },
+  {
+    field: 'INTERNET',
+    label: 'Conexión a Internet',
+    results: getResultsForGraphic('INTERNET')
+  },
+  {
+    field: 'CONSOLA_VIDEOJUEGO',
+    label: 'Consola de videojuego',
+    results: getResultsForGraphic('CONSOLA_VIDEOJUEGO')
+  },
+  {
+    field: 'CELULAR_SIN_INTERNET',
+    label: 'Celular sin Internet',
+    results: getResultsForGraphic('CELULAR_SIN_INTERNET')
+  },
+  {
+    field: 'CELULAR_CON_INTERNET',
+    label: 'Celular con Internet',
+    results: getResultsForGraphic('CELULAR_CON_INTERNET')
+  },
+  {
+    field: 'PERSONAL_PC_ESCRITORIO',
+    label: 'PC de escritorio personal',
+    results: getResultsForGraphic('PERSONAL_PC_ESCRITORIO')
+  },
+  {
+    field: 'PERSONAL_NOTEBOOK',
+    label: 'Notebook personal',
+    results: getResultsForGraphic('PERSONAL_NOTEBOOK')
+  },
+  {
+    field: 'USA_INTERNET',
+    label: 'Usa internet',
+    results: getResultsForGraphic('USA_INTERNET')
+  }
+];
 
-function Label({ x, y, children }) {
-  return (
-    <text fill="white" textAnchor="middle" x={x} y={y} dy=".33em" fontSize={9}>
-      {children}
-    </text>
-  );
+function getResultsForGraphic(field) {
+  return ResultadosEncuesta.reduce(
+    (result, item) => {
+      if (item[field]) {
+        result[0].value++;
+      } else {
+        result[1].value++;
+      }
+      return result;
+    },
+    [{ label: 'Si', value: 0 }, { label: 'No', value: 0 }]
+  ).map(item => ({ label: item.label, value: item.value * 100 / ResultadosEncuesta.length }));
 }
 
-const Graphic = ({
-  width,
-  height,
-  events = false,
-  margin = {
-    top: 30,
-    left: 20,
-    right: 20,
-    bottom: 110
-  }
-}) => {
-  if (width < 10) return null;
-  const radius = Math.min(width, height) / 2;
-  return (
-    <svg width={width} height={height}>
-      <GradientPinkBlue id="gradients" />
-      <rect x={0} y={0} rx={14} width={width} height={height} fill="url('#gradients')" />
-      <Group top={height / 2 - margin.top} left={width / 2}>
-        <Arc
-          data={browsers}
-          pieValue={d => d.usage}
-          outerRadius={radius - 80}
-          innerRadius={radius - 120}
-          fill="white"
-          fillOpacity={d => 1 / (d.index + 2)}
-          cornerRadius={3}
-          padAngle={0}
-          centroid={(centroid, arc) => {
-            console.log('centroid', centroid);
-            const [x, y] = centroid;
-            const { startAngle, endAngle } = arc;
-            if (endAngle - startAngle < 0.1) return null;
-            return (
-              <Label x={x} y={y}>
-                {arc.data.label}
-              </Label>
-            );
-          }}
-        />
-        <Arc
-          data={letters}
-          pieValue={d => d.frequency}
-          outerRadius={radius - 135}
-          fill="black"
-          fillOpacity={d => 1 / (d.index + 2)}
-          centroid={(centroid, arc) => {
-            const [x, y] = centroid;
-            return (
-              <Label x={x} y={y}>
-                {arc.data.letter}
-              </Label>
-            );
-          }}
-        />
-      </Group>
-    </svg>
-  );
-};
+function getGraficoByField(field) {
+  return Graficos.find(grafico => grafico.field === field);
+}
 
 class App extends Component {
+  state = {
+    grafico: Graficos[0].field
+  };
+
+  handleChange = (event, value) => {
+    this.setState({ grafico: value });
+  };
+
   render() {
     return (
-      <Paper>
-        <Graphic width="500" height="500" />
+      <Paper
+        style={{
+          width: '100vw',
+          height: '100vh',
+          display: '-webkit-flex',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Grafico grafico={getGraficoByField(this.state.grafico)} width="500" height="500" />
+        <FormControl style={{ marginLeft: '20px' }}>
+          <FormLabel>Gráfico</FormLabel>
+          <RadioGroup aria-label="grafico" name="grafico" selectedValue={this.state.grafico} onChange={this.handleChange}>
+            {Graficos.map(grafico =>
+              <FormControlLabel key={grafico.field} value={grafico.field} control={<Radio />} label={grafico.label} />
+            )}
+          </RadioGroup>
+        </FormControl>
       </Paper>
     );
   }
