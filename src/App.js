@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { Grafico } from './Grafico/Grafico.react';
 import Paper from 'material-ui/Paper';
 import { ResultadosEncuesta } from './ResultadosEncuesta';
+import { TopBar } from './TopBar/TopBar';
 
 const Graficos = [
   {
@@ -85,25 +86,27 @@ class App extends Component {
 
   render() {
     return (
-      <Paper
-        style={{
-          width: '100vw',
-          height: '100vh',
-          display: '-webkit-flex',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Grafico grafico={getGraficoByField(this.state.grafico)} width="500" height="500" />
-        <FormControl style={{ marginLeft: '20px' }}>
-          <FormLabel>Gráfico</FormLabel>
-          <RadioGroup aria-label="grafico" name="grafico" selectedValue={this.state.grafico} onChange={this.handleChange}>
-            {Graficos.map(grafico =>
-              <FormControlLabel key={grafico.field} value={grafico.field} control={<Radio />} label={grafico.label} />
-            )}
-          </RadioGroup>
-        </FormControl>
+      <Paper style={{ height: '100%' }}>
+        <TopBar title="Encuesta Joven" />
+        <div
+          style={{
+            display: '-webkit-flex',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '90%'
+          }}
+        >
+          <Grafico grafico={getGraficoByField(this.state.grafico)} width="500" height="500" />
+          <FormControl style={{ marginLeft: '20px' }}>
+            <FormLabel>Gráfico</FormLabel>
+            <RadioGroup aria-label="grafico" name="grafico" selectedValue={this.state.grafico} onChange={this.handleChange}>
+              {Graficos.map(grafico =>
+                <FormControlLabel key={grafico.field} value={grafico.field} control={<Radio />} label={grafico.label} />
+              )}
+            </RadioGroup>
+          </FormControl>
+        </div>
       </Paper>
     );
   }
