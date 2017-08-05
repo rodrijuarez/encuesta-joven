@@ -4,10 +4,12 @@ import { FormControl, FormControlLabel, FormLabel } from 'material-ui/Form';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import React, { Component } from 'react';
 
+import { Background } from './Background/Background';
 import { Grafico } from './Grafico/Grafico.react';
 import Paper from 'material-ui/Paper';
 import { ResultadosEncuesta } from './ResultadosEncuesta';
 import { TopBar } from './TopBar/TopBar';
+import { withScreenSize } from '@vx/responsive';
 
 const Graficos = [
   {
@@ -85,31 +87,49 @@ class App extends Component {
   };
 
   render() {
+    const { screenWidth, screenHeight } = this.props;
+
     return (
-      <Paper style={{ height: '100%' }}>
-        <TopBar title="Encuesta Joven" />
-        <div
+      <div
+        style={{
+          height: '100%'
+        }}
+      >
+        <Background width={screenWidth} height={screenHeight} />
+        <Paper
           style={{
-            display: '-webkit-flex',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '90%'
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            right: '0',
+            bottom: '0',
+            backgroundColor: 'transparent'
           }}
         >
-          <Grafico grafico={getGraficoByField(this.state.grafico)} width="500" height="500" />
-          <FormControl style={{ marginLeft: '20px' }}>
-            <FormLabel>Gráfico</FormLabel>
-            <RadioGroup aria-label="grafico" name="grafico" selectedValue={this.state.grafico} onChange={this.handleChange}>
-              {Graficos.map(grafico =>
-                <FormControlLabel key={grafico.field} value={grafico.field} control={<Radio />} label={grafico.label} />
-              )}
-            </RadioGroup>
-          </FormControl>
-        </div>
-      </Paper>
+          <TopBar title="Encuesta Joven" />
+          <div
+            style={{
+              display: '-webkit-flex',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '90%'
+            }}
+          >
+            <Grafico grafico={getGraficoByField(this.state.grafico)} width="500" height="500" />
+            <FormControl style={{ marginLeft: '20px' }}>
+              <FormLabel>Gráfico</FormLabel>
+              <RadioGroup aria-label="grafico" name="grafico" selectedValue={this.state.grafico} onChange={this.handleChange}>
+                {Graficos.map(grafico =>
+                  <FormControlLabel key={grafico.field} value={grafico.field} control={<Radio />} label={grafico.label} />
+                )}
+              </RadioGroup>
+            </FormControl>
+          </div>
+        </Paper>
+      </div>
     );
   }
 }
 
-export default App;
+export default withScreenSize(App);
