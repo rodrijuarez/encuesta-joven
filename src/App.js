@@ -15,6 +15,23 @@ function getGraficoByField(field) {
   return Graficos.find(grafico => grafico.field === field);
 }
 
+const paperStyles = {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    right: '0',
+    bottom: '0',
+    backgroundColor: 'transparent'
+  },
+  containerStyles = {
+    display: '-webkit-flex',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '90%'
+  },
+  formStyles = { marginLeft: '20px' };
+
 class App extends Component {
   state = {
     grafico: Graficos[0].field
@@ -34,28 +51,11 @@ class App extends Component {
         }}
       >
         <Background width={screenWidth} height={screenHeight} />
-        <Paper
-          style={{
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            right: '0',
-            bottom: '0',
-            backgroundColor: 'transparent'
-          }}
-        >
+        <Paper style={paperStyles}>
           <TopBar title="Encuesta Joven" />
-          <div
-            style={{
-              display: '-webkit-flex',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '90%'
-            }}
-          >
+          <div style={containerStyles}>
             <Grafico grafico={getGraficoByField(this.state.grafico)} width="500" height="500" />
-            <FormControl style={{ marginLeft: '20px' }}>
+            <FormControl style={formStyles}>
               <FormLabel>Gráfico</FormLabel>
               <RadioGroup aria-label="grafico" name="grafico" selectedValue={this.state.grafico} onChange={this.handleChange}>
                 {Graficos.map(grafico =>
